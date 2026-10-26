@@ -395,7 +395,8 @@ function git_push(
             exitcode = run(pipeline(ignorestatus(ls_remote); stdout = devnull)).exitcode
             exitcode in (0, 2) || error("git ls-remote failed with exit code $exitcode")
             if exitcode == 0
-                run(`$(git()) fetch upstream +refs/heads/$branch:refs/remotes/upstream/$branch`)
+                # Only the tip is needed, and the history of a deployment branch can be large.
+                run(`$(git()) fetch --depth=1 upstream +refs/heads/$branch:refs/remotes/upstream/$branch`)
             end
             exitcode == 0
         catch
